@@ -2,7 +2,7 @@ import {Routes,Route} from "react-router-dom";
 import Home from "./pages/Home";
 import Checkout from "./pages/Checkout";
 import Auth from "./pages/Auth";
-import './App.css'
+import './style.css'
 import Navbar from "./components/Navbar";
 
 function App() {
