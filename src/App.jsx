@@ -1,23 +1,24 @@
-import {Routes,Route} from "react-router-dom"; 
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Checkout from "./pages/Checkout";
 import Auth from "./pages/Auth";
-import './style.css'
 import Navbar from "./components/Navbar";
 
-function App() {
-  
+import "./style.css";
 
+function App() {
   return (
-  <div className='app'>
-    <Navbar/>
-    <Routes>
-      <Route path="/" element={<Home/>}/>
-      <Route path="/auth" element={<Auth/>}/>
-      <Route path="/checkout" element={<Checkout/>}/>
-    </Routes>
-  </div>
-  )
+    
+      <div className="app">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/checkout" element={<Checkout />} />
+        </Routes>
+      </div>
+  
+  );
 }
 
-export default App
+export default App;
