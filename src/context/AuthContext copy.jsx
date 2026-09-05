@@ -26,10 +26,11 @@ const AuthProvider = ({ children }) => {
 
   function login(email,password) {
     const users = JSON.parse(localStorage.getItem("users")) || [];
-    const user = users.find((u)=>u.email === email && u.password === password);
+    const user = users.find((us)=>us.email === email && us.password === password);
     if(user) {
       localStorage.setItem("currentUserEmail", email);
-      setUser({email: email});
+      setUser({email});
+      
       return {success: true};
     } else {
       return {success: false, error: "Invalid email or password"};
@@ -41,7 +42,7 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ signUp,user,logout }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ signUp,user,login,logout }}>{children}</AuthContext.Provider>
   );
 };
 

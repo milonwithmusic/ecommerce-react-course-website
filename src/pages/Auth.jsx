@@ -1,104 +1,169 @@
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "../pages/Auth.css";
 
 export default function Auth() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [authMode, setAuthMode] = useState("signup");
+  //removed all hooks as I am using react-hook-form for validation and form handling
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [confirmPassword, setConfirmPassword] = useState("");
+  // const [error, setError] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const { signUp } = useContext(AuthContext);
+  const { signUp, user, logout, login } = useContext(AuthContext);
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm({ shouldUnregister: true }); // Add shouldUnregister option
 
-  function handleSubmit(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-    setError(""); // Clear old error messages
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regular expression for email validation
-
-    //Email validation
-    if (!email) {
-      setError("Email is required");
-      return;
+  function onSubmit(data) {
+    setError(null); // Clear old error messages
+    let result;
+    if (authMode === "signup") {
+      result = signUp(data.email, data.password);
+    } else {
+      result = login(data.email, data.password);
     }
-    if (!emailRegex.test(email)) {
-      setError("Invalid email format");
-      return;
-    }
-
-    //Password validation
-    if (!password) {
-      setError("Password is required");
-      return;
-    }
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return;
-    }
-    //Confirm password validation
-    if (!confirmPassword) {
-      setError("Confirm password is required");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    console.log("All fields are filled out and validation is successful");
-
-    // Call the signUp function from AuthContext.Call signup only after validation succeeds
-    const result = signUp(email, password);
-
-    if (!result.success) {
+    if (result.success) {
+      navigate("/");
+      console.log("Authentication successful");
+      
+    } else {
       setError(result.error);
-      return;
     }
-    console.log("User signed up successfully");
+    console.log(result);
+
+    //e.preventDefault(); // Prevent the default form submission behavior
+    //Email validation - would be handled by useForm
+    //Password validation -would be handled by useForm
+    //Confirm password validation -would be handled by useForm
+    // console.log("All fields are filled out and validation is successful");
+    // Call the signUp function from AuthContext.Call signup only after validation succeeds
   }
 
-  function showSubmit() {
-    console.log(email, password, confirmPassword);
-  }
   return (
     <div className="page">
-      <h2 
-      className="text-orange-600 underline mt-4">Auth Page</h2>
-      <form 
-      id="auth-form" onSubmit={handleSubmit}
-      className="flex flex-col gap-4 w-1/3 mx-auto mt-8"
-      >
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          
-        />
-        {error && <p className="error font-light">{error}</p>}
-        <input
-          id="new-password"
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
-        <input
-          id="confirm-password"
-          type="password"
-          placeholder="Confirm your password"
-          value={confirmPassword}
-          onChange={(event) => setConfirmPassword(event.target.value)}
-        />
-      </form>
-      <button
-        onClick={showSubmit}
-        type="submit"
-        form="auth-form"
-        className="btn btn-secondary text-green-500 mt-5"
-      >
-        Submit
-      </button>
+      <div className="auth-container">
+        {user && <p className="text-green-500">Logged in as: {user.email}</p>}
+        {authMode === "login" ? (
+          <button onClick={() => logout()}>Logout</button>
+        ) : (
+          <div></div>
+        )}
+
+        <h2 className="page-title text-orange-600 mt-4">
+          {authMode === "signup" ? "Sign Up" : "Login"}
+        </h2>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="auth-form flex flex-col gap-2 w-1/3 mx-auto mt-4"
+        >
+          {error && <div className="error-message">{error}</div>}
+          {/* EMAIL */}{" "}
+          <div className="form-group">
+            {" "}
+            <label className="form-label"> Email </label>{" "}
+            <input
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email format",
+                },
+              })}
+              type="email"
+              placeholder="Enter your email"
+              className="form-input"
+            />{" "}
+            {errors.email && (
+              <p className="error"> {errors.email.message} </p>
+            )}{" "}
+          </div>
+          {/* PASSWORD  */}
+          <div className="form-group">
+            {" "}
+            <label className="form-label"> Password </label>{" "}
+            <input
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters",
+                },
+                maxLength: {
+                  value: 20,
+                  message: "Password must be at most 20 characters",
+                },
+              })}
+              id="new-password"
+              type="password"
+              placeholder="Enter your password"
+              className="form-input"
+            />{" "}
+            {errors.password && (
+              <p className="error"> {errors.password.message} </p>
+            )}{" "}
+          </div>
+          {/* Confirm Password */}
+          {authMode === "signup" && (
+            <div className="form-group">
+              <label htmlFor="" className="form-label">
+                Confirm Password
+              </label>
+              <input
+                {...register("confirmPassword", {
+                  required: "Confirm Password is required",
+                  validate: (value) =>
+                    value === getValues("password") || "Passwords do not match",
+                })}
+                type="password"
+                placeholder="Confirm your password"
+                className="form-input"
+              />
+              {errors.confirmPassword && (
+                <p className="error">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+          )}
+          {/* SUBMIT BUTTON  */}
+          <button
+            type="submit"
+            className="btn btn-secondary mt-3"
+          >
+            {authMode === "signup" ? "Sign Up" : "Login"}
+          </button>
+        </form>
+        {/*AUTH MODE SWITCH  */}
+        <div className="auth-switch">
+          {authMode === "signup" ? (
+            <p className="text-gray-500">
+              Wanna create an account?{" "}
+              <span
+                onClick={() => setAuthMode("login")}
+                className="text-blue-500 hover:underline"
+              >
+                SignUp
+              </span>
+            </p>
+          ) : (
+            <p className="text-gray-500">
+              Already have an account?{" "}
+              <span
+                onClick={() => setAuthMode("signup")}
+                className="auth-link text-blue-500 hover:underline"
+              >
+                Login
+              </span>
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

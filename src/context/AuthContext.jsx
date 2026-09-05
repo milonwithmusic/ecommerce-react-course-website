@@ -11,16 +11,16 @@ const AuthProvider = ({ children }) => {
 
   function signUp(email, password) {
     const users = JSON.parse(localStorage.getItem("users")) || [];
-    if(users.find((u)=>u.email === email)) {
-      return {success: false, error: "User already exists"};
+
+    if(users.find((u) => u.email === email)) {
+           return{success: false, error: "Email already exists"};
     }
-    const newUser = { email: email, password: password };
+    const newUser= {email, password};
     users.push(newUser);
     localStorage.setItem("users", JSON.stringify(users));
+    
     localStorage.setItem("currentUserEmail", email);
-    console.log("User signed up:", newUser);
-    console.log("All users:", users);
-
+    setUser({email});
     return {success: true};
   }
 
@@ -41,7 +41,7 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ signUp,user,logout }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ signUp,user,login,logout }}>{children}</AuthContext.Provider>
   );
 };
 
