@@ -1,8 +1,9 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
+import {useAuth}  from "../context/AuthContext";
 import { useForm } from "react-hook-form";
-import { AuthContext } from "../context/AuthContext";
+//import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "../pages/Auth.css";
+import "../pages/Auth.css"; 
 
 export default function Auth() {
   const [authMode, setAuthMode] = useState("signup");
@@ -14,7 +15,7 @@ export default function Auth() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const { signUp, user, logout, login } = useContext(AuthContext);
+  const { signUp, login } = useAuth();
   const {
     register,
     handleSubmit,
@@ -37,7 +38,7 @@ export default function Auth() {
     } else {
       setError(result.error);
     }
-    console.log(result);
+  
 
     //e.preventDefault(); // Prevent the default form submission behavior
     //Email validation - would be handled by useForm
@@ -50,12 +51,12 @@ export default function Auth() {
   return (
     <div className="page">
       <div className="auth-container">
-        {user && <p className="text-green-500">Logged in as: {user.email}</p>}
+        {/* {user && <p className="text-green-500">Logged in as: {user.email}</p>}
         {authMode === "login" ? (
           <button onClick={() => logout()}>Logout</button>
         ) : (
           <div></div>
-        )}
+        )} */}
 
         <h2 className="page-title text-orange-600 mt-4">
           {authMode === "signup" ? "Sign Up" : "Login"}
