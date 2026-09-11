@@ -1,0 +1,24 @@
+.btn-custom {
+  background-color: #ff5722;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.navbar-brand {
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 1px;
+}
+.product-card-name {
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.checkout-button {
+  background: linear-gradient(135deg, #ff5722, #ff9800);
+  font-weight: bold;
+}
+.home-hero h1 {
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 1px;
+}

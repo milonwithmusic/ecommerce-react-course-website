@@ -155,6 +155,6 @@ export const products = [
   }
 ];
 
-export function getProducts () {
+export function getProductById () {
     return products;
 } 

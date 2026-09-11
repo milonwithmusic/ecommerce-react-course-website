@@ -1,16 +1,47 @@
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
-import { Link } from "react-router";
+export default function ProductCard({ product }) {
+  const { addToCart, cartItems } = useCart();
+  const productInCart = cartItems.find((item) => item.id === product.id);
 
-export default function ProductCard({product}) {
+  const productQuantityLabel = productInCart
+    ? `(${productInCart.quantity})`
+    : "";
+
   return (
-    <div className="product-card" key={product.id}>
-      <img src={product.image} className="product-image" />
-      <div className="product-card-content">
-        <h3 className="product-card-name">{product.name}</h3>
-        <p className="product-card-price">${product.price}</p>
-        <div className="product-card-actions">
-          <Link className="btn btn-secondary">View Details</Link>
-          <button className="btn btn-primary">Add to Cart</button>
+    <div
+      key={product.id}
+      className="bg-white shadow-md rounded-lg overflow-hidden hover:scale-105 transition-transform duration-200"
+    >
+      {/* Product Image */}
+      <img
+        src={product.image}
+        alt={product.name}
+        className="w-full h-48 object-cover"
+      />
+
+      {/* Content */}
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-gray-800 truncate">
+          {product.name}
+        </h3>
+        <p className="text-gray-600 mt-1">${product.price}</p>
+
+        {/* Actions */}
+        <div className="flex items-center justify-between mt-4">
+          <Link
+            to={`/product/${product.id}`}
+            className="px-3 py-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+          >
+            View Details
+          </Link>
+          <button
+            onClick={() => addToCart(product.id)}
+            className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 transition"
+          >
+            Add to Cart {productQuantityLabel}
+          </button>
         </div>
       </div>
     </div>
